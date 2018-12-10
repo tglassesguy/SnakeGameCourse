@@ -1,5 +1,28 @@
 ;(function() {
 
+    class Random {
+        static get(inicio, final){
+            return Math.floor(Math.random() * final) + inicio
+        }
+    }
+
+    class Food {
+
+        constructor(x,y){
+            this.x = x
+            this.y = y
+        }
+
+        static generate(){
+            return new Food(Random.get(0,500), Random.get(0,300))
+        }
+
+        draw(){
+            ctx.fillRect(this.x, this.y, 10, 10)
+        }
+
+    }
+
     class Square {
         constructor(x,y) {
             this.x = x
@@ -98,6 +121,7 @@
     const ctx = canvas.getContext('2d')
 
     const snake = new Snake()
+    let foods = [];
 
     window.addEventListener("keydown", function(event) {
 
@@ -115,6 +139,33 @@
         snake.move()
         ctx.clearRect(0,0,canvas.width,canvas.height)
         snake.draw()
+        drawFood() //Mantiene el plano de la comida.
     }, 1000/10)
+
+    function drawFood() {
+        for (const index in foods){
+            const food = foods[index]
+            food.draw()
+        }
+    }
+
+    setInterval(function () {
+        const food = Food.generate()
+        foods.push(food) //Agrega la comida creada al arreglo
+
+        setTimeout(function () {
+            //Elimina la comida
+            removeFromFoods(food)
+        }, 10000) //cada 10 segundos.
+
+    },4000)// cada 4 segundos
+
+    function removeFromFoods(food) {
+        // El resultado de filter es otro arreglo con los objetos que cumplieron con
+        // cierta condición.
+        foods = foods.filter(function(f) {
+            return food !== f
+        })
+    }
 
 })()
