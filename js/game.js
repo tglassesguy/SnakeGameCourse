@@ -15,6 +15,7 @@
         }
 
         add() {
+            if(this.hasBack()) return this.back.add()
             this.back = new Square(this.x, this.y)
         }
 
@@ -24,6 +25,7 @@
 
         copy(){
             if(this.hasBack()){
+                this.back.copy();
                 this.back.x = this.x
                 this.back.y = this.y
             }
@@ -56,6 +58,10 @@
             this.head = new Square(100,0)
             this.draw()
             this.direccion = "right"
+            this.head.add()
+            this.head.add()
+            this.head.add()
+            this.head.add()
             this.head.add()
         }
 
@@ -94,10 +100,15 @@
     const snake = new Snake()
 
     window.addEventListener("keydown", function(event) {
+
+        event.preventDefault()
+
         if(event.keyCode == 40) return snake.down();
         if(event.keyCode == 39) return snake.right();
         if(event.keyCode == 38) return snake.up();
         if(event.keyCode == 37) return snake.left();
+
+        return false
      })
 
     setInterval(function(){
