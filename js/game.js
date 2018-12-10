@@ -11,6 +11,8 @@
         constructor(x,y){
             this.x = x
             this.y = y
+            this.width = 10
+            this.height = 10
         }
 
         static generate(){
@@ -18,7 +20,7 @@
         }
 
         draw(){
-            ctx.fillRect(this.x, this.y, 10, 10)
+            ctx.fillRect(this.x, this.y, this.width, this.height)
         }
 
     }
@@ -27,11 +29,13 @@
         constructor(x,y) {
             this.x = x
             this.y = y
+            this.width = 10
+            this.height = 10
             this.back = null //Cuadrado atras
         }
 
         draw() {
-            ctx.fillRect(this.x,this.y,10,10)
+            ctx.fillRect(this.x,this.y,this.width,this.height)
             if(this.hasBack()){
                 this.back.draw()
             }
@@ -115,6 +119,10 @@
             if(this.direccion=="right") return this.head.right()
         }
 
+        eat(){
+            this.head.add()
+        }
+
     }
 
     const canvas = document.getElementById('canvas')
@@ -125,7 +133,7 @@
 
     window.addEventListener("keydown", function(event) {
 
-        event.preventDefault()
+        if(event.keyCode > 36 && event.keyCode < 41) event.preventDefault()
 
         if(event.keyCode == 40) return snake.down();
         if(event.keyCode == 39) return snake.right();
@@ -145,7 +153,13 @@
     function drawFood() {
         for (const index in foods){
             const food = foods[index]
-            food.draw()
+            if(typeof food != "undefined"){
+                food.draw()
+                if(hit(food, snake.head)){
+                    snake.eat()
+                    removeFromFoods(food)
+                }
+            }
         }
     }
 
@@ -167,5 +181,31 @@
             return food !== f
         })
     }
+
+    function hit(a,b){
+    var hit = false;
+        if(b.x + b.width >= a.x && b.x < a.x + a.width){
+
+            if(b.y + b.height >= a.y && b.y < a.y + a.height){
+                hit=true;
+            }
+        }
+
+        if(b.x <= a.x && b.x + b.width >= a.x + a.width){
+
+            if(b.y <= a.y && b.y + b.height >= a.y + a.height){
+                hit=true;
+            }
+        }
+
+        if(a.x <=b.x && a.x + a.width >= b.x + b.width){
+
+            if(a.y <= b.y && a.y + a.height >= b.y + b.height){
+                hit = true;
+            }
+        }
+        return hit;
+    }﻿
+
 
 })()
