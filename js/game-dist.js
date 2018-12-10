@@ -4,11 +4,51 @@
         constructor(x,y) {
             this.x = x
             this.y = y
+            this.back = null //Cuadrado atras
         }
 
         draw() {
             ctx.fillRect(this.x,this.y,10,10)
+            if(this.hasBack()){
+                this.back.draw()
+            }
         }
+
+        add() {
+            this.back = new Square(this.x, this.y)
+        }
+
+        hasBack() {
+            return this.back != null
+        }
+
+        copy(){
+            if(this.hasBack()){
+                this.back.x = this.x
+                this.back.y = this.y
+            }
+        }
+
+        up(){
+            this.copy()
+            this.y -=10
+        }
+
+        down(){
+            this.copy()
+            this.y +=10
+        }
+
+        left(){
+            this.copy()
+            this.x -=10
+        }
+
+        right(){
+            this.copy()
+            this.x +=10
+        }
+
     }
 
     class Snake {
@@ -16,6 +56,7 @@
             this.head = new Square(100,0)
             this.draw()
             this.direccion = "right"
+            this.head.add()
         }
 
         draw(){
@@ -39,10 +80,10 @@
         }
 
         move() {
-            if(this.direccion=="up") return this.head.y -=10
-            if(this.direccion=="down") return this.head.y +=10
-            if(this.direccion=="left") return this.head.x -=10
-            if(this.direccion=="right") return this.head.x +=10
+            if(this.direccion=="up") return this.head.up()
+            if(this.direccion=="down") return this.head.down()
+            if(this.direccion=="left") return this.head.left()
+            if(this.direccion=="right") return this.head.right()
         }
 
     }
