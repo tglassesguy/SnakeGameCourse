@@ -78,6 +78,28 @@
             this.x +=10
         }
 
+        hit(head , segundo = false) {
+            if(this == head && !this.hasBack()) return false  //Por si es solo cabeza
+            if(this == head) return this.back.hit(head, true) // El true sirve para indicar si se trata del segundo cuadro del cuerpo
+
+            if(segundo && !this.hasBack()) return false
+            if(segundo) return this.back.hit(head)
+
+            //No es ni la cabeza, ni el segundo.
+
+            if(this.hasBack()) {
+                return squareHit(this, head) || this.back.hit(head)
+            }
+
+            //No es la cabeza, ni el segundo y soy el ultimo.
+
+            return squareHit(this, head)
+        }
+
+        hitBorder() {
+            return (this.x > 490 || this.x < 0 || this.y > 290 || this.y < 0)
+        }
+
     }
 
     class Snake {
@@ -97,18 +119,22 @@
         }
 
         right() {
+            if (this.direccion == "left") return;
             this.direccion = "right"
         }
 
         left() {
+            if (this.direccion == "right") return;
             this.direccion = "left"
         }
 
         up() {
+            if (this.direccion == "down") return;
             this.direccion = "up"
         }
 
         down() {
+            if (this.direccion == "up") return;
             this.direccion = "down"
         }
 
@@ -121,6 +147,10 @@
 
         eat(){
             this.head.add()
+        }
+
+        dead() {
+            return this.head.hit(this.head) || this.head.hitBorder()
         }
 
     }
@@ -143,11 +173,15 @@
         return false
      })
 
-    setInterval(function(){
+    const animacion = setInterval(function(){
         snake.move()
         ctx.clearRect(0,0,canvas.width,canvas.height)
         snake.draw()
         drawFood() //Mantiene el plano de la comida.
+        if(snake.dead()){
+            alert("Se acabó el juego")
+            window.clearInterval(animacion)
+        }
     }, 1000/10)
 
     function drawFood() {
@@ -182,29 +216,33 @@
         })
     }
 
+    function squareHit(cuadrado1 , cuadrado2 ) {
+        return cuadrado1.x == cuadrado2.x && cuadrado1.y == cuadrado2.y
+    }
+
     function hit(a,b){
-    var hit = false;
-        if(b.x + b.width >= a.x && b.x < a.x + a.width){
+        var hit = false;
+            if(b.x + b.width >= a.x && b.x < a.x + a.width){
 
-            if(b.y + b.height >= a.y && b.y < a.y + a.height){
-                hit=true;
+                if(b.y + b.height >= a.y && b.y < a.y + a.height){
+                    hit=true;
+                }
             }
-        }
 
-        if(b.x <= a.x && b.x + b.width >= a.x + a.width){
+            if(b.x <= a.x && b.x + b.width >= a.x + a.width){
 
-            if(b.y <= a.y && b.y + b.height >= a.y + a.height){
-                hit=true;
+                if(b.y <= a.y && b.y + b.height >= a.y + a.height){
+                    hit=true;
+                }
             }
-        }
 
-        if(a.x <=b.x && a.x + a.width >= b.x + b.width){
+            if(a.x <=b.x && a.x + a.width >= b.x + b.width){
 
-            if(a.y <= b.y && a.y + a.height >= b.y + b.height){
-                hit = true;
+                if(a.y <= b.y && a.y + a.height >= b.y + b.height){
+                    hit = true;
+                }
             }
-        }
-        return hit;
+            return hit;
     }﻿
 
 
